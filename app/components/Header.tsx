@@ -37,11 +37,6 @@ export default function Header() {
                                 className="group relative h-[var(--header-height)] flex items-center text-xs font-bold uppercase tracking-wide text-[var(--text-primary)] hover:text-[var(--text-primary)] transition-colors"
                             >
                                 {item.label}
-                                {item.isNew && (
-                                    <span className="absolute top-5 -right-3 text-[9px] font-bold text-[var(--primary)]">
-                                        NEW
-                                    </span>
-                                )}
                                 {/* Active Indicator line */}
                                 <span className="absolute bottom-0 left-0 w-full h-[4px] bg-[var(--primary)] scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
                             </Link>
