@@ -1,0 +1,456 @@
+{
+    "reviewers": [
+        {
+            "id": 1,
+            "name": "Priya Sharma",
+            "avatar": "https://randomuser.me/api/portraits/women/1.jpg",
+            "verified": true,
+            "location": "Mumbai"
+        },
+        {
+            "id": 2,
+            "name": "Rahul Verma",
+            "avatar": "https://randomuser.me/api/portraits/men/2.jpg",
+            "verified": true,
+            "location": "Delhi"
+        },
+        {
+            "id": 3,
+            "name": "Ananya Gupta",
+            "avatar": "https://randomuser.me/api/portraits/women/3.jpg",
+            "verified": false,
+            "location": "Bangalore"
+        },
+        {
+            "id": 4,
+            "name": "Vikram Singh",
+            "avatar": "https://randomuser.me/api/portraits/men/4.jpg",
+            "verified": true,
+            "location": "Pune"
+        },
+        {
+            "id": 5,
+            "name": "Sneha Patel",
+            "avatar": "https://randomuser.me/api/portraits/women/5.jpg",
+            "verified": true,
+            "location": "Ahmedabad"
+        },
+        {
+            "id": 6,
+            "name": "Arjun Reddy",
+            "avatar": "https://randomuser.me/api/portraits/men/6.jpg",
+            "verified": false,
+            "location": "Hyderabad"
+        },
+        {
+            "id": 7,
+            "name": "Kavya Nair",
+            "avatar": "https://randomuser.me/api/portraits/women/7.jpg",
+            "verified": true,
+            "location": "Chennai"
+        },
+        {
+            "id": 8,
+            "name": "Aditya Kumar",
+            "avatar": "https://randomuser.me/api/portraits/men/8.jpg",
+            "verified": true,
+            "location": "Kolkata"
+        },
+        {
+            "id": 9,
+            "name": "Meera Iyer",
+            "avatar": "https://randomuser.me/api/portraits/women/9.jpg",
+            "verified": false,
+            "location": "Coimbatore"
+        },
+        {
+            "id": 10,
+            "name": "Rohan Mehta",
+            "avatar": "https://randomuser.me/api/portraits/men/10.jpg",
+            "verified": true,
+            "location": "Jaipur"
+        },
+        {
+            "id": 11,
+            "name": "Ishita Banerjee",
+            "avatar": "https://randomuser.me/api/portraits/women/11.jpg",
+            "verified": true,
+            "location": "Lucknow"
+        },
+        {
+            "id": 12,
+            "name": "Karan Malhotra",
+            "avatar": "https://randomuser.me/api/portraits/men/12.jpg",
+            "verified": false,
+            "location": "Chandigarh"
+        },
+        {
+            "id": 13,
+            "name": "Divya Krishnan",
+            "avatar": "https://randomuser.me/api/portraits/women/13.jpg",
+            "verified": true,
+            "location": "Kochi"
+        },
+        {
+            "id": 14,
+            "name": "Siddharth Joshi",
+            "avatar": "https://randomuser.me/api/portraits/men/14.jpg",
+            "verified": true,
+            "location": "Nashik"
+        },
+        {
+            "id": 15,
+            "name": "Riya Desai",
+            "avatar": "https://randomuser.me/api/portraits/women/15.jpg",
+            "verified": false,
+            "location": "Surat"
+        },
+        {
+            "id": 16,
+            "name": "Manish Agarwal",
+            "avatar": "https://randomuser.me/api/portraits/men/16.jpg",
+            "verified": true,
+            "location": "Indore"
+        },
+        {
+            "id": 17,
+            "name": "Pooja Saxena",
+            "avatar": "https://randomuser.me/api/portraits/women/17.jpg",
+            "verified": true,
+            "location": "Bhopal"
+        },
+        {
+            "id": 18,
+            "name": "Nikhil Chandra",
+            "avatar": "https://randomuser.me/api/portraits/men/18.jpg",
+            "verified": false,
+            "location": "Patna"
+        },
+        {
+            "id": 19,
+            "name": "Shruti Tiwari",
+            "avatar": "https://randomuser.me/api/portraits/women/19.jpg",
+            "verified": true,
+            "location": "Varanasi"
+        },
+        {
+            "id": 20,
+            "name": "Gaurav Pandey",
+            "avatar": "https://randomuser.me/api/portraits/men/20.jpg",
+            "verified": true,
+            "location": "Noida"
+        },
+        {
+            "id": 21,
+            "name": "Nisha Kapoor",
+            "avatar": "https://randomuser.me/api/portraits/women/21.jpg",
+            "verified": false,
+            "location": "Gurgaon"
+        },
+        {
+            "id": 22,
+            "name": "Harsh Vardhan",
+            "avatar": "https://randomuser.me/api/portraits/men/22.jpg",
+            "verified": true,
+            "location": "Dehradun"
+        },
+        {
+            "id": 23,
+            "name": "Swati Mishra",
+            "avatar": "https://randomuser.me/api/portraits/women/23.jpg",
+            "verified": true,
+            "location": "Ranchi"
+        },
+        {
+            "id": 24,
+            "name": "Amit Rastogi",
+            "avatar": "https://randomuser.me/api/portraits/men/24.jpg",
+            "verified": false,
+            "location": "Agra"
+        },
+        {
+            "id": 25,
+            "name": "Tanya Oberoi",
+            "avatar": "https://randomuser.me/api/portraits/women/25.jpg",
+            "verified": true,
+            "location": "Chandigarh"
+        },
+        {
+            "id": 26,
+            "name": "Prakash Menon",
+            "avatar": "https://randomuser.me/api/portraits/men/26.jpg",
+            "verified": true,
+            "location": "Trivandrum"
+        },
+        {
+            "id": 27,
+            "name": "Aarti Choudhary",
+            "avatar": "https://randomuser.me/api/portraits/women/27.jpg",
+            "verified": false,
+            "location": "Jodhpur"
+        },
+        {
+            "id": 28,
+            "name": "Deepak Sinha",
+            "avatar": "https://randomuser.me/api/portraits/men/28.jpg",
+            "verified": true,
+            "location": "Guwahati"
+        },
+        {
+            "id": 29,
+            "name": "Kritika Sethi",
+            "avatar": "https://randomuser.me/api/portraits/women/29.jpg",
+            "verified": true,
+            "location": "Amritsar"
+        },
+        {
+            "id": 30,
+            "name": "Rajesh Kulkarni",
+            "avatar": "https://randomuser.me/api/portraits/men/30.jpg",
+            "verified": false,
+            "location": "Nagpur"
+        }
+    ],
+    "reviewTemplates": [
+        {
+            "rating": 5,
+            "title": "Absolutely love it!",
+            "content": "This product exceeded all my expectations. The quality is amazing and the fit is perfect. Highly recommend to everyone!",
+            "helpful": 124
+        },
+        {
+            "rating": 5,
+            "title": "Best purchase ever",
+            "content": "I've been looking for something like this for a long time. The material quality is top-notch and it looks exactly like the pictures.",
+            "helpful": 89
+        },
+        {
+            "rating": 4,
+            "title": "Great value for money",
+            "content": "Really happy with this purchase. The product is good quality considering the price. Delivery was also super fast.",
+            "helpful": 67
+        },
+        {
+            "rating": 5,
+            "title": "Perfect fit!",
+            "content": "Ordered my usual size and it fits perfectly. The color is vibrant and hasn't faded after multiple washes.",
+            "helpful": 156
+        },
+        {
+            "rating": 4,
+            "title": "Good quality product",
+            "content": "The material feels premium and comfortable. Stitching is neat. Only wish the packaging was better.",
+            "helpful": 45
+        },
+        {
+            "rating": 5,
+            "title": "Exceeded expectations",
+            "content": "Was skeptical at first but this turned out to be an excellent buy. My friends keep asking where I got it from!",
+            "helpful": 203
+        },
+        {
+            "rating": 4,
+            "title": "Nice product",
+            "content": "Overall a good purchase. The look and feel is exactly as shown. Comfortable to wear all day.",
+            "helpful": 78
+        },
+        {
+            "rating": 5,
+            "title": "Amazing quality!",
+            "content": "The craftsmanship is superb. You can tell this is made with care. Will definitely buy more from this brand.",
+            "helpful": 112
+        },
+        {
+            "rating": 4,
+            "title": "Worth every rupee",
+            "content": "Good product at a reasonable price. The design is modern and trendy. Happy with the purchase.",
+            "helpful": 34
+        },
+        {
+            "rating": 5,
+            "title": "Must buy!",
+            "content": "If you're thinking about buying this, just do it! You won't regret it. The quality is outstanding.",
+            "helpful": 98
+        },
+        {
+            "rating": 4,
+            "title": "Happy customer",
+            "content": "This is my second purchase and I'm equally satisfied. Consistent quality from this brand.",
+            "helpful": 56
+        },
+        {
+            "rating": 5,
+            "title": "Love the design",
+            "content": "Such a beautiful design! Gets compliments every time I wear it. The fabric is soft and comfortable.",
+            "helpful": 145
+        },
+        {
+            "rating": 4,
+            "title": "Great product, fast delivery",
+            "content": "Product quality is good. Myntra delivery was quick as always. Packaging could be improved though.",
+            "helpful": 23
+        },
+        {
+            "rating": 5,
+            "title": "Stunning!",
+            "content": "Absolutely stunning piece! The attention to detail is impressive. Worth every penny spent.",
+            "helpful": 187
+        },
+        {
+            "rating": 4,
+            "title": "Good but could be better",
+            "content": "Nice product overall. The material is good but slightly thinner than expected. Still a good buy.",
+            "helpful": 41
+        },
+        {
+            "rating": 5,
+            "title": "Premium quality",
+            "content": "You can feel the premium quality the moment you touch it. Fits like a glove. Highly satisfied!",
+            "helpful": 134
+        },
+        {
+            "rating": 4,
+            "title": "Comfortable fit",
+            "content": "Very comfortable to wear. The size chart is accurate. Good for everyday use.",
+            "helpful": 67
+        },
+        {
+            "rating": 5,
+            "title": "Perfect for gifting",
+            "content": "Bought this as a gift and the recipient loved it! Comes in nice packaging too.",
+            "helpful": 89
+        },
+        {
+            "rating": 4,
+            "title": "Stylish and trendy",
+            "content": "Love the contemporary design. Goes well with many outfits. Good quality fabric.",
+            "helpful": 52
+        },
+        {
+            "rating": 5,
+            "title": "Exactly as described",
+            "content": "What you see is what you get. The product matches the description perfectly. Very happy!",
+            "helpful": 176
+        },
+        {
+            "rating": 4,
+            "title": "Decent quality",
+            "content": "Good quality for the price range. Colors are true to the image. Would recommend.",
+            "helpful": 38
+        },
+        {
+            "rating": 5,
+            "title": "Will buy again!",
+            "content": "Already planning to buy more in different colors. Such great quality and perfect fit!",
+            "helpful": 94
+        },
+        {
+            "rating": 4,
+            "title": "Nice fabric",
+            "content": "The fabric quality is really nice. Breathable and comfortable. Perfect for Indian weather.",
+            "helpful": 61
+        },
+        {
+            "rating": 5,
+            "title": "10/10 recommend",
+            "content": "Best online shopping experience! The product is exactly as shown. Fast delivery too!",
+            "helpful": 143
+        },
+        {
+            "rating": 4,
+            "title": "Good purchase",
+            "content": "Satisfied with the product. Quality is decent and fits well. Value for money.",
+            "helpful": 29
+        },
+        {
+            "rating": 5,
+            "title": "Absolutely gorgeous!",
+            "content": "This is hands down one of the best things I've bought online. The quality is unmatched!",
+            "helpful": 167
+        },
+        {
+            "rating": 4,
+            "title": "Nice and comfortable",
+            "content": "Soft material, nice stitching, and comfortable fit. Happy with this purchase.",
+            "helpful": 48
+        },
+        {
+            "rating": 5,
+            "title": "Great find!",
+            "content": "Was looking for something like this for ages. Finally found it and it's perfect!",
+            "helpful": 82
+        },
+        {
+            "rating": 4,
+            "title": "Reliable brand",
+            "content": "This brand never disappoints. Consistent quality across all their products.",
+            "helpful": 55
+        },
+        {
+            "rating": 5,
+            "title": "Superb quality",
+            "content": "The quality is exceptional. You can tell it's made with premium materials. Love it!",
+            "helpful": 198
+        },
+        {
+            "rating": 4,
+            "title": "Good daily wear",
+            "content": "Perfect for daily use. Rugged and durable. Slightly heavy but manageable.",
+            "helpful": 42
+        },
+        {
+            "rating": 5,
+            "title": "Classy and Elegant",
+            "content": "Looks very classy. I wore it to a party and got so many compliments. Highly recommended.",
+            "helpful": 115
+        },
+        {
+            "rating": 3,
+            "title": "Average product",
+            "content": "It's okay for the price. Not great, not terrible. You get what you pay for.",
+            "helpful": 20
+        },
+        {
+            "rating": 5,
+            "title": "Fastest delivery ever!",
+            "content": "Ordered yesterday, delivered today! Super impressed with the service and the product quality.",
+            "helpful": 210
+        },
+        {
+            "rating": 4,
+            "title": "Sizing is a bit off",
+            "content": "Quality is great but the size runs a bit small. Order one size up for a better fit.",
+            "helpful": 88
+        },
+        {
+            "rating": 5,
+            "title": "Color is vibrant",
+            "content": "The color is exactly as shown in the picture. Very happy with the vibrancy.",
+            "helpful": 132
+        },
+        {
+            "rating": 4,
+            "title": "Comfortable",
+            "content": "Very comfortable material. Does not itch or irritate the skin. Good for long wear.",
+            "helpful": 59
+        },
+        {
+            "rating": 5,
+            "title": "Premium packaging",
+            "content": "The unboxing experience was great. Premium packaging makes it feel like a luxury product.",
+            "helpful": 144
+        },
+        {
+            "rating": 3,
+            "title": "Different from image",
+            "content": "The texture looks different in person. It's not bad, just different from what I expected.",
+            "helpful": 33
+        },
+        {
+            "rating": 5,
+            "title": "My new favorite!",
+            "content": "This has quickly become my go-to item. I find myself reaching for it all the time.",
+            "helpful": 178
+        }
+    ]
+}
