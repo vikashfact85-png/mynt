@@ -38,9 +38,15 @@ export default function AdminProducts() {
         try {
             const res = await fetch('/api/products');
             const data = await res.json();
-            setProducts(data);
+            if (Array.isArray(data)) {
+                setProducts(data);
+            } else {
+                console.error('Expected array of products but got:', data);
+                setProducts([]);
+            }
         } catch (error) {
             console.error('Error fetching products:', error);
+            setProducts([]);
         } finally {
             setLoading(false);
         }
@@ -141,7 +147,9 @@ export default function AdminProducts() {
         setImageUrls(updated);
     };
 
-    const filtered = products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.brand.toLowerCase().includes(searchQuery.toLowerCase()));
+    const filtered = Array.isArray(products) 
+        ? products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.brand.toLowerCase().includes(searchQuery.toLowerCase()))
+        : [];
 
     return (
         <div className="p-8 pb-24">
