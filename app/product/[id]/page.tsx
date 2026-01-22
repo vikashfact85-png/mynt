@@ -8,11 +8,12 @@ import Header from '@/app/components/Header';
 import ProductReviews from '@/app/components/ProductReviews';
 import CountdownTimer from '@/app/components/CountdownTimer';
 import ProductCard from '@/app/components/ProductCard';
-import { Product, DEMO_PRODUCTS } from '@/lib/types';
+import { Product } from '@/lib/types';
 
 export default function ProductDetail({ params }: { params: Promise<{ id: string }> }) {
     const resolvedParams = use(params);
     const [product, setProduct] = useState<Product | null>(null);
+    const [recommendedProducts, setRecommendedProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedSize, setSelectedSize] = useState('');
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -26,6 +27,16 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                 if (!res.ok) throw new Error('Product not found');
                 const data = await res.json();
                 setProduct(data);
+                
+                // Fetch recommended products
+                if (data && data.category) {
+                    const recRes = await fetch(`/api/products?category=${data.category}`);
+                    if (recRes.ok) {
+                        const recData = await recRes.json();
+                        // Filter out current product and limit to 4
+                        setRecommendedProducts(recData.filter((p: Product) => p.id !== data.id).slice(0, 4));
+                    }
+                }
             } catch (error) {
                 console.error('Error fetching product:', error);
                 setProduct(null);
@@ -98,11 +109,6 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
             </div>
         );
     }
-
-    // Filter recommended products (exclude current, limit to 4)
-    const recommendedProducts = DEMO_PRODUCTS
-        .filter(p => p.id !== product.id)
-        .slice(0, 4);
 
     return (
         <div className="min-h-screen bg-white">

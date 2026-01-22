@@ -1,18 +1,18 @@
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
-import { DEMO_PRODUCTS, Product } from '@/lib/types';
+import { Product } from '@/lib/types';
+import { connectDB } from '@/lib/mongodb';
+import { ProductModel } from '@/lib/models';
 
 async function getProducts() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/products`, {
-      cache: 'no-store',
-    });
-    if (!res.ok) throw new Error('Failed to fetch');
-    return await res.json();
+    await connectDB();
+    const products = await ProductModel.find({}).sort({ created_at: -1 }).lean();
+    return JSON.parse(JSON.stringify(products));
   } catch (error) {
-    console.log('Using demo products');
-    return DEMO_PRODUCTS;
+    console.error('Failed to fetch products:', error);
+    return [];
   }
 }
 

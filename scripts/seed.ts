@@ -1,6 +1,6 @@
 import { connectDB } from '../lib/mongodb';
 import { ProductModel } from '../lib/models';
-import { DEMO_PRODUCTS } from '../lib/types';
+// import { DEMO_PRODUCTS } from '../lib/types';
 
 async function seedDatabase() {
     try {
@@ -12,8 +12,9 @@ async function seedDatabase() {
         console.log('✅ Cleared existing products');
 
         // Insert demo products
-        const products = await ProductModel.insertMany(DEMO_PRODUCTS);
-        console.log(`✅ Inserted ${products.length} products`);
+        // const products = await ProductModel.insertMany(DEMO_PRODUCTS);
+        // console.log(`✅ Inserted ${products.length} products`);
+        console.log('ℹ️ Demo products seeding disabled (DEMO_PRODUCTS removed).');
 
         console.log('🎉 Database seeded successfully!');
         process.exit(0);

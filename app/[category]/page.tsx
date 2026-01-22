@@ -1,8 +1,9 @@
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
-import { DEMO_PRODUCTS } from '@/lib/types';
 import { notFound } from 'next/navigation';
+import { connectDB } from '@/lib/mongodb';
+import { ProductModel } from '@/lib/models';
 
 export async function generateStaticParams() {
   return [
@@ -25,7 +26,9 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
      notFound();
   }
 
-  const products = DEMO_PRODUCTS.filter(p => p.category === dbCategory);
+  await connectDB();
+  const dbProducts = await ProductModel.find({ category: dbCategory }).lean();
+  const products = JSON.parse(JSON.stringify(dbProducts));
 
   const categoryTitle = category === 'home' ? 'Home & Living' : category.charAt(0).toUpperCase() + category.slice(1);
 
@@ -38,7 +41,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
             
             {products.length > 0 ? (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {products.map(product => (
+                    {products.map((product: any) => (
                         <ProductCard key={product.id} product={product} />
                     ))}
                 </div>
