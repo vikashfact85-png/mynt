@@ -1,210 +1,25 @@
-@import 'tailwindcss';
+@import "tailwindcss";
+@source "../app";
+@source "../components";
+@source "../lib";
 
-:root {
-  /* Myntra Premium Colors */
-  --primary: #ff3f6c;
-  --primary-dark: #d63359;
-  --primary-light: #ff7f9d;
-  --secondary: #282c3f;
-  /* Deep Navy/Black for headers */
-
-  /* Backgrounds */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f4f5f9;
-  /* Slightly darker/warmer gray for effortless contrast */
-  --bg-tertiary: #eeeeee;
-  /* Search bars / Dividers */
-  --bg-overlay: rgba(0, 0, 0, 0.6);
-
-  /* Text Colors */
-  --text-primary: #282c3f;
-  /* Closest to Myntra's primary text */
-  --text-secondary: #535665;
-  /* Elegant gray for subheaders */
-  --text-tertiary: #93959e;
-  /* Muted text */
-  --text-on-primary: #ffffff;
-
-  /* Status Colors */
-  --success: #03a685;
-  --warning: #ff9f00;
-  --error: #ff5722;
-
-  /* Borders */
-  --border-light: #f5f5f6;
-  --border-medium: #eaeaec;
-  /* Common border color */
-  --border-dark: #d4d5d9;
-
-  /* Shadows (Softer, more diffuse) */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-menu: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
-
-  /* Spacing System */
-  --header-height: 80px;
-  /* Standard spacious header */
-  --container-max: 1440px;
-  /* Wider for that full-screen modern feel */
+@theme {
+  --font-display: "Assistant", "sans-serif";
+  --font-body: "Assistant", "sans-serif";
 }
 
-@media (max-width: 768px) {
-  :root {
-    --header-height: 60px;
-  }
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: 'Assistant', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  line-height: 1.5;
-  overflow-x: hidden;
-}
-
-/* Global Container - Centered by default */
-.container {
-  width: 100%;
-  max-width: var(--container-max);
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 24px;
-  padding-right: 24px;
-}
-
-@media (max-width: 640px) {
-  .container {
-    padding-left: 16px;
-    padding-right: 16px;
-  }
-}
-
-/* Typography Utilities */
-.h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-
-.h2 {
-  font-size: 2rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
-.h3 {
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
-.text-body {
-  font-size: 1rem;
-  color: var(--text-secondary);
-}
-
-.text-small {
-  font-size: 0.875rem;
-  color: var(--text-tertiary);
-}
-
-/* Buttons */
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--primary);
-  color: var(--text-on-primary);
-  font-weight: 700;
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 12px 28px;
-  border-radius: 4px;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid transparent;
-}
-
-.btn-primary:hover {
-  background-color: var(--primary-dark);
-  box-shadow: 0 4px 12px rgba(255, 63, 108, 0.2);
-  transform: translateY(-1px);
-}
-
-.btn-outline {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-  color: var(--text-primary);
-  border: 1px solid var(--border-dark);
-  font-weight: 600;
-  font-size: 14px;
-  padding: 12px 24px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-}
-
-.btn-outline:hover {
-  border-color: var(--text-primary);
-  background-color: rgba(0, 0, 0, 0.02);
-}
-
-/* Custom Scrollbar - Minimalist */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #d4d5d9;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #a9abb3;
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
+/* Myntra-like Custom Utilities */
+@layer utilities {
+  .text-primary { color: #282c3f; }
+  .text-secondary { color: #535665; }
+  .text-muted { color: #94969f; }
+  .bg-primary { background-color: #ff3f6c; }
+  
+  .btn-primary {
+    @apply w-full inline-flex items-center justify-center bg-[#ff3f6c] text-white font-bold text-sm uppercase tracking-wide px-6 py-3 rounded shadow-md transition-all hover:bg-[#d63359] active:scale-95 border border-transparent;
   }
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  .btn-secondary {
+    @apply w-full inline-flex items-center justify-center bg-white text-[#282c3f] font-bold text-sm uppercase tracking-wide px-6 py-3 rounded border border-[#d4d5d9] transition-all hover:border-[#282c3f] active:scale-95;
   }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.4s ease-out forwards;
-}
-
-/* Product Card Base Styles */
-.product-card-hover {
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
-}
-
-.product-card-hover:hover {
-  box-shadow: 0 12px 20px 0 rgba(0, 0, 0, 0.08);
-  /* Myntra-like clean drop shadow */
-  transform: translateY(-2px);
-  z-index: 10;
 }

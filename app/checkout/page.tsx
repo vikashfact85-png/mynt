@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
@@ -25,14 +26,6 @@ export default function CheckoutPage() {
     const [orderId, setOrderId] = useState('');
     const [bankDetails, setBankDetails] = useState<BankDetails>(DEFAULT_BANK_DETAILS);
 
-    useEffect(() => {
-        const savedBag = localStorage.getItem('mynt_bag');
-        if (savedBag) {
-            setBagItems(JSON.parse(savedBag));
-        }
-        fetchBankDetails();
-    }, []);
-
     const fetchBankDetails = async () => {
         try {
             const res = await fetch('/api/settings');
@@ -42,6 +35,14 @@ export default function CheckoutPage() {
             console.error('Error fetching bank details:', error);
         }
     };
+
+    useEffect(() => {
+        const savedBag = localStorage.getItem('mynt_bag');
+        if (savedBag) {
+            setBagItems(JSON.parse(savedBag));
+        }
+        fetchBankDetails();
+    }, []);
 
     const subtotal = bagItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
     const deliveryFee = subtotal >= 799 ? 0 : 79;
@@ -60,15 +61,26 @@ export default function CheckoutPage() {
         setCurrentStep('payment-status');
     };
 
-    const handleFinalSubmit = () => {
-        // Generate order ID
+    const handleFinalSubmit = async () => {
+        // Generate order ID (optional, backend can generate it, but we use it for display)
         const newOrderId = 'MYN' + Date.now().toString().slice(-6);
 
-        // Create order
-        const order = {
-            id: newOrderId,
-            ...formData,
-            items: bagItems.length,
+        // Create order object
+        const orderData = {
+            customer_name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            address: formData.address,
+            city: formData.city,
+            pincode: formData.pincode,
+            items: bagItems.map(item => ({
+                product_id: item.product_id,
+                product_name: item.product.name,
+                size: item.size,
+                color: item.color,
+                quantity: item.quantity,
+                price: item.product.price
+            })),
             total_amount: total,
             status: 'pending',
             payment_method: paymentMethod,
@@ -77,16 +89,27 @@ export default function CheckoutPage() {
             created_at: new Date().toISOString(),
         };
 
-        // Save order
-        const existingOrders = JSON.parse(localStorage.getItem('mynt_orders') || '[]');
-        existingOrders.unshift(order);
-        localStorage.setItem('mynt_orders', JSON.stringify(existingOrders));
+        try {
+            const res = await fetch('/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(orderData),
+            });
 
-        // Clear bag
-        localStorage.setItem('mynt_bag', '[]');
+            if (!res.ok) throw new Error('Failed to place order');
 
-        setOrderId(newOrderId);
-        setCurrentStep('success');
+            const savedOrder = await res.json();
+            
+            // Clear bag
+            localStorage.setItem('mynt_bag', '[]');
+            setBagItems([]);
+
+            setOrderId(savedOrder.id || newOrderId);
+            setCurrentStep('success');
+        } catch (error) {
+            console.error('Error placing order:', error);
+            alert('Failed to place order. Please try again.');
+        }
     };
 
     // Empty bag check
@@ -314,11 +337,12 @@ export default function CheckoutPage() {
                                             {bankDetails.upi_qr_code_url ? (
                                                 <div className="flex flex-col items-center">
                                                     <p className="text-sm text-slate-600 mb-4">Scan the QR code below to pay</p>
-                                                    <div className="w-64 h-64 border-2 border-slate-200 rounded-xl overflow-hidden bg-white p-4">
-                                                        <img
+                                                    <div className="w-64 h-64 border-2 border-slate-200 rounded-xl overflow-hidden bg-white p-4 relative">
+                                                        <Image
                                                             src={bankDetails.upi_qr_code_url}
                                                             alt="UPI QR Code"
-                                                            className="w-full h-full object-contain"
+                                                            fill
+                                                            className="object-contain"
                                                         />
                                                     </div>
                                                 </div>

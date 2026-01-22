@@ -35,6 +35,27 @@ export async function POST(request: Request) {
         await connectDB();
         const body = await request.json();
 
+        // Auto-generate rating (4.8, 4.9, or 5.0) if not provided
+        if (!body.rating || body.rating === 0) {
+            const ratings = [4.8, 4.9, 5.0];
+            body.rating = ratings[Math.floor(Math.random() * ratings.length)];
+        }
+
+        // Auto-generate purchase count (2-4 digits: 10-9999) if not provided
+        if (!body.reviews_count || body.reviews_count === 0) {
+            const minDigits = 2;
+            const maxDigits = 4;
+            const digits = Math.floor(Math.random() * (maxDigits - minDigits + 1)) + minDigits;
+
+            if (digits === 2) {
+                body.reviews_count = Math.floor(Math.random() * 90) + 10; // 10-99
+            } else if (digits === 3) {
+                body.reviews_count = Math.floor(Math.random() * 900) + 100; // 100-999
+            } else {
+                body.reviews_count = Math.floor(Math.random() * 9000) + 1000; // 1000-9999
+            }
+        }
+
         const product = await ProductModel.create(body);
 
         const formatted = {

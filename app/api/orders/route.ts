@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import { OrderModel } from '@/lib/models';
 
+export const dynamic = 'force-dynamic';
+
 // GET all orders
 export async function GET() {
     try {
