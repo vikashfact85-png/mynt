@@ -147,6 +147,30 @@ export default function AdminProducts() {
         setImageUrls(updated);
     };
 
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const res = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData,
+            });
+            const data = await res.json();
+            if (res.ok) {
+                updateImageUrl(index, data.url);
+            } else {
+                alert(data.error || 'Upload failed');
+            }
+        } catch (error) {
+            console.error('Error uploading:', error);
+            alert('Upload failed');
+        }
+    };
+
     const filtered = Array.isArray(products) 
         ? products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.brand.toLowerCase().includes(searchQuery.toLowerCase()))
         : [];
@@ -219,7 +243,7 @@ export default function AdminProducts() {
                                 </div>
                                 <div className="space-y-2 max-h-48 overflow-y-auto">
                                     {imageUrls.map((url, index) => (
-                                        <div key={index} className="flex gap-2">
+                                        <div key={index} className="flex gap-2 items-center">
                                             <input
                                                 type="url"
                                                 value={url}
@@ -227,6 +251,10 @@ export default function AdminProducts() {
                                                 placeholder={`Image URL ${index + 1}`}
                                                 className="flex-1 px-4 py-2 border border-slate-200 rounded-lg text-sm"
                                             />
+                                            <label className="cursor-pointer px-3 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 text-sm font-medium whitespace-nowrap">
+                                                Upload
+                                                <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, index)} />
+                                            </label>
                                             <button
                                                 type="button"
                                                 onClick={() => removeImageField(index)}

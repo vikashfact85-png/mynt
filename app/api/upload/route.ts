@@ -35,8 +35,9 @@ export async function POST(request: Request) {
 
         // Generate unique filename
         const timestamp = Date.now();
-        const extension = file.name.split('.').pop();
-        const filename = `upi-qr-${timestamp}.${extension}`;
+        // sanitize filename
+        const originalName = file.name.replace(/[^a-zA-Z0-9.-]/g, '');
+        const filename = `${timestamp}-${originalName}`;
         const filepath = path.join(uploadsDir, filename);
 
         // Save file

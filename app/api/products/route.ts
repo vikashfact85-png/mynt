@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import { ProductModel } from '@/lib/models';
 
+export const dynamic = 'force-dynamic';
+
 // GET all products or filter by category
 export async function GET(request: Request) {
     try {
@@ -16,6 +18,10 @@ export async function GET(request: Request) {
 
         const products = await ProductModel.find(query).lean();
 
+        if (!products) {
+            return NextResponse.json([]);
+        }
+
         const formatted = products.map(p => ({
             ...p,
             id: p._id.toString(),
@@ -23,9 +29,12 @@ export async function GET(request: Request) {
         }));
 
         return NextResponse.json(formatted);
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error fetching products:', error);
-        return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
+        return NextResponse.json(
+            { error: 'Failed to fetch products', details: error.message }, 
+            { status: 500 }
+        );
     }
 }
 

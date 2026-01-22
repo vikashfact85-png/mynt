@@ -6,11 +6,19 @@ import { connectDB } from '@/lib/mongodb';
 import { ProductModel } from '@/lib/models';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 async function getProducts() {
   try {
     await connectDB();
-    const products = await ProductModel.find({}).sort({ created_at: -1 }).limit(12).lean();
-    return JSON.parse(JSON.stringify(products));
+    // Sort by _id descending (newest first)
+    const products = await ProductModel.find({}).sort({ _id: -1 }).limit(12).lean();
+    
+    return products.map((p: any) => ({
+        ...p,
+        id: p._id.toString(),
+        _id: undefined,
+    }));
   } catch (error) {
     console.error('Failed to fetch products:', error);
     return [];
