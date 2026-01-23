@@ -52,48 +52,51 @@ export default function ProductCard({ product }: ProductCardProps) {
 
                     {/* Badges */}
                     {product.discount_percent > 30 && (
-                        <div className="absolute top-2 left-2 bg-[#ff3f6c] text-white px-2 py-0.5 rounded-sm text-[10px] font-bold uppercase tracking-wider">
+                        <div className="absolute top-1 left-1 md:top-2 md:left-2 bg-[#ff3f6c] text-white px-1 py-0.5 md:px-2 rounded-sm text-[8px] md:text-[10px] font-bold uppercase tracking-wider">
                             {product.discount_percent}% OFF
                         </div>
                     )}
 
                     {product.rating > 0 && (
-                        <div className="absolute bottom-2 left-2 flex items-center gap-1 px-1.5 py-0.5 bg-white/95 rounded text-[10px] font-bold text-[#282c3f] shadow-sm">
+                        <div className="absolute bottom-1 left-1 md:bottom-2 md:left-2 flex items-center gap-0.5 md:gap-1 px-1 py-0.5 md:px-1.5 bg-white/95 rounded text-[8px] md:text-[10px] font-bold text-[#282c3f] shadow-sm">
                             <span>{product.rating.toFixed(1)}</span>
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="#14958f"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                            <svg width="8" height="8" className="md:w-[10px] md:h-[10px]" viewBox="0 0 24 24" fill="#14958f"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
                         </div>
                     )}
                 </div>
             </Link>
 
-            {/* Info Container */}
-            <div className="p-3 flex flex-col flex-1">
+            {/* Info Container - More compact on mobile */}
+            <div className="p-2 md:p-3 flex flex-col flex-1">
                 <Link href={`/product/${product.id}`}>
-                    <h3 className="text-[14px] font-bold text-[#282c3f] truncate mb-0.5 hover:text-[#ff3f6c] transition-colors">
+                    <h3 className="text-[11px] md:text-[14px] font-bold text-[#282c3f] truncate mb-0.5 hover:text-[#ff3f6c] transition-colors">
                         {product.brand}
                     </h3>
                 </Link>
-                <p className="text-[12px] text-[#535665] truncate mb-2 font-normal">
+                <p className="text-[10px] md:text-[12px] text-[#535665] truncate mb-1 md:mb-2 font-normal">
                     {product.name}
                 </p>
-                <div className="flex items-center gap-2 mb-3">
-                    <span className="text-[14px] font-bold text-[#282c3f]">₹{product.price.toLocaleString()}</span>
+                <div className="flex items-center gap-1 md:gap-2 mb-1 md:mb-3 flex-wrap">
+                    <span className="text-[11px] md:text-[14px] font-bold text-[#282c3f]">₹{product.price.toLocaleString()}</span>
                     {product.discount_percent > 0 && (
-                        <span className="text-[11px] text-[#94969f] line-through font-light">₹{product.original_price.toLocaleString()}</span>
+                        <span className="text-[9px] md:text-[11px] text-[#94969f] line-through font-light">₹{product.original_price.toLocaleString()}</span>
+                    )}
+                    {product.discount_percent > 0 && (
+                        <span className="text-[9px] md:text-[11px] text-[#ff3f6c] font-medium">{product.discount_percent}% off</span>
                     )}
                 </div>
 
-                {/* Always Visible Action Buttons */}
-                <div className="mt-auto flex flex-col gap-2">
+                {/* Action Buttons - Compact on mobile */}
+                <div className="mt-auto flex flex-col gap-1 md:gap-2">
                     <button
                         onClick={handleBuyNow}
-                        className="w-full py-2 bg-[#ff3f6c] text-white font-bold uppercase tracking-wide text-[10px] rounded-sm shadow-md hover:bg-[#d63359] transition-colors flex items-center justify-center gap-1"
+                        className="w-full py-1.5 md:py-2 bg-[#ff3f6c] text-white font-bold uppercase tracking-wide text-[8px] md:text-[10px] rounded-sm shadow-md hover:bg-[#d63359] transition-colors flex items-center justify-center gap-1"
                     >
                         ⚡ Buy Now
                     </button>
                     <Link
                         href={`/product/${product.id}`}
-                        className="w-full py-2 bg-white text-[#282c3f] border border-[#d4d5d9] font-bold uppercase tracking-wide text-[10px] rounded-sm hover:border-[#282c3f] transition-colors text-center block"
+                        className="w-full py-1.5 md:py-2 bg-white text-[#282c3f] border border-[#d4d5d9] font-bold uppercase tracking-wide text-[8px] md:text-[10px] rounded-sm hover:border-[#282c3f] transition-colors text-center block"
                     >
                         View Details
                     </Link>

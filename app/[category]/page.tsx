@@ -15,15 +15,15 @@ export async function generateStaticParams() {
 
 export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
   const { category } = await params;
-  
+
   // Direct mapping since we unified URLs
   const dbCategory = category;
 
   // Validate category
   const validCategories = ['men', 'women', 'home'];
-  
+
   if (!validCategories.includes(dbCategory)) {
-     notFound();
+    notFound();
   }
 
   await connectDB();
@@ -34,25 +34,25 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)]">
-        <Header />
-        
-        <main className="container py-8 min-h-[60vh]">
-            <h1 className="text-3xl font-extrabold uppercase tracking-widest mb-8 text-[var(--text-primary)]">{categoryTitle}</h1>
-            
-            {products.length > 0 ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {products.map((product: any) => (
-                        <ProductCard key={product.id} product={product} />
-                    ))}
-                </div>
-            ) : (
-                <div className="text-center py-20">
-                    <p className="text-xl text-[var(--text-secondary)]">No products found in this category.</p>
-                </div>
-            )}
-        </main>
+      <Header />
 
-        <Footer />
+      <main className="container py-8 min-h-[60vh]">
+        <h1 className="text-3xl font-extrabold uppercase tracking-widest mb-8 text-[var(--text-primary)]">{categoryTitle}</h1>
+
+        {products.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
+            {products.map((product: any) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-20">
+            <p className="text-xl text-[var(--text-secondary)]">No products found in this category.</p>
+          </div>
+        )}
+      </main>
+
+      <Footer />
     </div>
   );
 }

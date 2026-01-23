@@ -13,11 +13,11 @@ async function getProducts() {
     await connectDB();
     // Sort by _id descending (newest first)
     const products = await ProductModel.find({}).sort({ _id: -1 }).limit(12).lean();
-    
+
     return products.map((p: any) => ({
-        ...p,
-        id: p._id.toString(),
-        _id: undefined,
+      ...p,
+      id: p._id.toString(),
+      _id: undefined,
     }));
   } catch (error) {
     console.error('Failed to fetch products:', error);
@@ -75,9 +75,9 @@ export default async function Home() {
             </Link>
           </div>
 
-          <div className="flex flex-wrap gap-x-6 gap-y-10">
+          <div className="flex flex-wrap gap-x-3 gap-y-4 md:gap-x-6 md:gap-y-10">
             {products.map((product: Product) => (
-              <div key={product.id} className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)]">
+              <div key={product.id} className="w-[calc(50%-6px)] sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)]">
                 <ProductCard product={product} />
               </div>
             ))}
