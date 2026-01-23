@@ -14,6 +14,16 @@ const sidebarLinks = [
     { href: '/admin/settings', label: 'Settings' },
 ];
 
+const SIZE_CHARTS = {
+    clothing: ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'],
+    footwear: ['UK 3', 'UK 4', 'UK 5', 'UK 6', 'UK 7', 'UK 8', 'UK 9', 'UK 10', 'UK 11', 'UK 12'],
+    kids: ['0-6M', '6-12M', '1-2Y', '2-3Y', '3-4Y', '5-6Y', '7-8Y', '9-10Y'],
+    freesize: ['Free Size'],
+    none: [] as string[],
+};
+
+type SizeChartType = keyof typeof SIZE_CHARTS;
+
 export default function AdminProducts() {
     const pathname = usePathname();
     const [products, setProducts] = useState<Product[]>([]);
@@ -25,8 +35,9 @@ export default function AdminProducts() {
     // Form state
     const [formData, setFormData] = useState({
         name: '', brand: '', description: '', price: '', original_price: '',
-        category: 'men' as Product['category'], subcategory: '', sizes: '', colors: '', stock: '',
+        category: 'men' as Product['category'], subcategory: '', sizes: [] as string[], colors: '', stock: '',
     });
+    const [sizeChart, setSizeChart] = useState<SizeChartType>('clothing');
     const [imageUrls, setImageUrls] = useState<string[]>(['']);
 
     useEffect(() => {
@@ -70,7 +81,7 @@ export default function AdminProducts() {
             original_price: parseFloat(formData.original_price),
             discount_percent: Math.round((1 - parseFloat(formData.price) / parseFloat(formData.original_price)) * 100),
             images: validImages,
-            sizes: formData.sizes.split(',').map(s => s.trim()).filter(Boolean),
+            sizes: formData.sizes,
             colors: formData.colors.split(',').map(c => c.trim()).filter(Boolean),
             category: formData.category,
             subcategory: formData.subcategory,
@@ -104,9 +115,20 @@ export default function AdminProducts() {
 
     const handleEdit = (p: Product) => {
         setEditingProduct(p);
+
+        // Determine size chart based on category or existing sizes
+        let detectedChart: SizeChartType = 'none';
+        if (p.sizes && p.sizes.length > 0) {
+            if (p.sizes[0].includes('UK')) detectedChart = 'footwear';
+            else if (p.sizes[0].includes('M') || p.sizes[0].includes('Y')) detectedChart = 'kids';
+            else if (p.sizes[0] === 'Free Size') detectedChart = 'freesize';
+            else detectedChart = 'clothing';
+        }
+
+        setSizeChart(detectedChart);
         setFormData({
             name: p.name, brand: p.brand, description: p.description, price: p.price.toString(), original_price: p.original_price.toString(),
-            category: p.category, subcategory: p.subcategory, sizes: p.sizes.join(', '), colors: p.colors.join(', '), stock: p.stock.toString(),
+            category: p.category, subcategory: p.subcategory, sizes: p.sizes, colors: p.colors.join(', '), stock: p.stock.toString(),
         });
         setImageUrls(p.images.length > 0 ? p.images : ['']);
         setShowModal(true);
@@ -125,8 +147,20 @@ export default function AdminProducts() {
 
     const resetForm = () => {
         setEditingProduct(null);
-        setFormData({ name: '', brand: '', description: '', price: '', original_price: '', category: 'men', subcategory: '', sizes: '', colors: '', stock: '' });
+        setFormData({ name: '', brand: '', description: '', price: '', original_price: '', category: 'men', subcategory: '', sizes: [], colors: '', stock: '' });
+        setSizeChart('clothing');
         setImageUrls(['']);
+    };
+
+    const handleSizeToggle = (size: string) => {
+        setFormData(prev => {
+            const currentSizes = prev.sizes;
+            if (currentSizes.includes(size)) {
+                return { ...prev, sizes: currentSizes.filter(s => s !== size) };
+            } else {
+                return { ...prev, sizes: [...currentSizes, size] };
+            }
+        });
     };
 
     const addImageField = () => {
@@ -171,7 +205,7 @@ export default function AdminProducts() {
         }
     };
 
-    const filtered = Array.isArray(products) 
+    const filtered = Array.isArray(products)
         ? products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.brand.toLowerCase().includes(searchQuery.toLowerCase()))
         : [];
 
@@ -277,11 +311,49 @@ export default function AdminProducts() {
                                 <div><label className="block text-sm font-medium text-slate-700 mb-1">Category *</label><select value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value as Product['category'] })} className="w-full px-4 py-2 border border-slate-200 rounded-lg"><option value="men">Men</option><option value="women">Women</option><option value="kids">Kids</option><option value="home">Home & Living</option><option value="beauty">Beauty</option></select></div>
                                 <div><label className="block text-sm font-medium text-slate-700 mb-1">Subcategory</label><input type="text" value={formData.subcategory} onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })} className="w-full px-4 py-2 border border-slate-200 rounded-lg" placeholder="e.g., T-Shirts, Jeans" /></div>
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Sizes (optional)</label>
-                                    <input type="text" value={formData.sizes} onChange={(e) => setFormData({ ...formData, sizes: e.target.value })} className="w-full px-4 py-2 border border-slate-200 rounded-lg" placeholder="S, M, L, XL" />
-                                    <p className="text-xs text-slate-500 mt-1">💡 Leave empty for auto sizes (S, M, L, XL, XXL) on clothing</p>
+                                    <label className="block text-sm font-medium text-slate-700 mb-2">Size Type *</label>
+                                    <div className="flex flex-wrap gap-2 mb-3">
+                                        {(['clothing', 'footwear', 'kids', 'freesize', 'none'] as SizeChartType[]).map((type) => (
+                                            <button
+                                                key={type}
+                                                type="button"
+                                                onClick={() => {
+                                                    setSizeChart(type);
+                                                    setFormData({ ...formData, sizes: [] }); // Reset selection on change
+                                                }}
+                                                className={`px-3 py-1.5 rounded-lg text-sm font-medium capitalize border ${sizeChart === type
+                                                    ? 'bg-pink-50 border-pink-500 text-pink-700'
+                                                    : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
+                                                    }`}
+                                            >
+                                                {type}
+                                            </button>
+                                        ))}
+                                    </div>
+
+                                    {sizeChart !== 'none' && (
+                                        <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                                            <label className="block text-sm font-medium text-slate-700 mb-2">Select Available Sizes:</label>
+                                            <div className="flex flex-wrap gap-2">
+                                                {SIZE_CHARTS[sizeChart].map((size) => (
+                                                    <button
+                                                        key={size}
+                                                        type="button"
+                                                        onClick={() => handleSizeToggle(size)}
+                                                        className={`px-3 py-2 rounded-lg text-sm font-bold border transition-all ${formData.sizes.includes(size)
+                                                            ? 'bg-pink-500 border-pink-500 text-white shadow-sm'
+                                                            : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
+                                                            }`}
+                                                    >
+                                                        {size}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                            {formData.sizes.length === 0 && <p className="text-xs text-amber-600 mt-2">⚠️ No sizes selected. Please select at least one.</p>}
+                                        </div>
+                                    )}
                                 </div>
                                 <div><label className="block text-sm font-medium text-slate-700 mb-1">Available Colors (comma separated)</label><input type="text" value={formData.colors} onChange={(e) => setFormData({ ...formData, colors: e.target.value })} className="w-full px-4 py-2 border border-slate-200 rounded-lg" placeholder="Black, White, Blue" /></div>
                             </div>

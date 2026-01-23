@@ -27,7 +27,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                 if (!res.ok) throw new Error('Product not found');
                 const data = await res.json();
                 setProduct(data);
-                
+
                 // Fetch recommended products
                 if (data && data.category) {
                     const recRes = await fetch(`/api/products?category=${data.category}`);
@@ -49,7 +49,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
     }, [resolvedParams.id]);
 
     const handleAddToBag = () => {
-        if (!selectedSize) {
+        if (product && product.sizes && product.sizes.length > 0 && !selectedSize) {
             alert('Please select a size');
             return;
         }
@@ -115,7 +115,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
             <Header />
 
             <main className="max-w-7xl mx-auto px-4 md:px-6 pt-8 pb-20">
-                
+
                 {/* Breadcrumb */}
                 <nav className="flex items-center gap-2 text-sm text-[#535665] mb-8">
                     <Link href="/" className="hover:text-[#282c3f] transition-colors">Home</Link>
@@ -127,7 +127,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
 
                 {/* Content Wrapper: Flex Row on Desktop, Col on Mobile */}
                 <div className="flex flex-col lg:flex-row gap-12 xl:gap-16">
-                    
+
                     {/* Left Column: Images (58% width on desktop) */}
                     <div className="w-full lg:w-[58%]">
                         {/* Desktop Gallery: Thumbnails Left + Main Image Right */}
@@ -138,21 +138,20 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                                     <div
                                         key={index}
                                         onClick={() => setCurrentImageIndex(index)}
-                                        className={`relative w-full aspect-[3/4] cursor-pointer border rounded-sm overflow-hidden transition-all ${
-                                            currentImageIndex === index ? 'border-[#ff3f6c] ring-1 ring-[#ff3f6c]' : 'border-transparent hover:border-gray-300'
-                                        }`}
+                                        className={`relative w-full aspect-[3/4] cursor-pointer border rounded-sm overflow-hidden transition-all ${currentImageIndex === index ? 'border-[#ff3f6c] ring-1 ring-[#ff3f6c]' : 'border-transparent hover:border-gray-300'
+                                            }`}
                                     >
-                                        <Image 
-                                            src={image} 
-                                            alt={`View ${index + 1}`} 
-                                            fill 
+                                        <Image
+                                            src={image}
+                                            alt={`View ${index + 1}`}
+                                            fill
                                             className="object-cover"
                                             sizes="80px"
                                         />
                                     </div>
                                 ))}
                             </div>
-                            
+
                             {/* Main Image Stage */}
                             <div className="flex-1 relative bg-gray-50 rounded-sm overflow-hidden cursor-zoom-in">
                                 <Image
@@ -168,7 +167,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
 
                         {/* Mobile Gallery: Swipeable Horizontal Scroll */}
                         <div className="lg:hidden relative">
-                            <div 
+                            <div
                                 ref={scrollContainerRef}
                                 onScroll={handleScroll}
                                 className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide aspect-[3/4] bg-gray-50"
@@ -189,11 +188,10 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                             {/* Mobile Dots */}
                             <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
                                 {product.images.map((_, index) => (
-                                    <div 
+                                    <div
                                         key={index}
-                                        className={`h-1.5 rounded-full transition-all shadow-sm ${
-                                            currentImageIndex === index ? 'bg-[#ff3f6c] w-4' : 'bg-white/80 w-1.5'
-                                        }`}
+                                        className={`h-1.5 rounded-full transition-all shadow-sm ${currentImageIndex === index ? 'bg-[#ff3f6c] w-4' : 'bg-white/80 w-1.5'
+                                            }`}
                                     />
                                 ))}
                             </div>
@@ -203,7 +201,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                     {/* Right Column: Product Details (42% width on desktop) */}
                     <div className="w-full lg:w-[42%]">
                         <div className="lg:sticky lg:top-24 flex flex-col gap-8">
-                            
+
                             {/* Header Section */}
                             <div className="border-b border-[#eaeaec] pb-6">
                                 <h1 className="text-2xl font-bold text-[#282c3f] uppercase tracking-wide mb-2">
@@ -212,11 +210,11 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                                 <p className="text-xl text-[#535665] font-normal leading-snug">
                                     {product.name}
                                 </p>
-                                
+
                                 {/* Rating Badge */}
                                 <div className="inline-flex items-center gap-2 mt-4 px-2 py-1 border border-[#eaeaec] rounded bg-white cursor-pointer hover:border-[#282c3f] transition-colors">
                                     <span className="font-bold text-sm text-[#282c3f] flex items-center gap-1">
-                                        {product.rating.toFixed(1)} 
+                                        {product.rating.toFixed(1)}
                                         <svg className="w-3.5 h-3.5 text-[#14958f]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
                                     </span>
                                     <span className="w-px h-3 bg-[#d4d5d9]"></span>
@@ -240,27 +238,28 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                             </div>
 
                             {/* Size Selector */}
-                            <div>
-                                <div className="flex items-center justify-between mb-4">
-                                    <span className="text-sm font-bold text-[#282c3f] uppercase tracking-wide">Select Size</span>
-                                    <button className="text-sm font-bold text-[#ff3f6c] uppercase tracking-wide hover:underline">Size Chart</button>
-                                </div>
-                                <div className="flex flex-wrap gap-3">
-                                    {(product.sizes?.length ? product.sizes : ['S', 'M', 'L', 'XL', 'XXL']).map((size) => (
-                                        <button
-                                            key={size}
-                                            onClick={() => setSelectedSize(size)}
-                                            className={`w-12 h-12 rounded-full flex items-center justify-center border font-bold text-sm transition-all duration-200 ${
-                                                selectedSize === size
+                            {product.sizes && product.sizes.length > 0 && (
+                                <div>
+                                    <div className="flex items-center justify-between mb-4">
+                                        <span className="text-sm font-bold text-[#282c3f] uppercase tracking-wide">Select Size</span>
+                                        <button className="text-sm font-bold text-[#ff3f6c] uppercase tracking-wide hover:underline">Size Chart</button>
+                                    </div>
+                                    <div className="flex flex-wrap gap-3">
+                                        {product.sizes.map((size) => (
+                                            <button
+                                                key={size}
+                                                onClick={() => setSelectedSize(size)}
+                                                className={`w-12 h-12 rounded-full flex items-center justify-center border font-bold text-sm transition-all duration-200 ${selectedSize === size
                                                     ? 'border-[#ff3f6c] text-[#ff3f6c] ring-1 ring-[#ff3f6c] bg-white'
                                                     : 'border-[#bfc0c6] text-[#282c3f] hover:border-[#ff3f6c] bg-white'
-                                            }`}
-                                        >
-                                            {size}
-                                        </button>
-                                    ))}
+                                                    }`}
+                                            >
+                                                {size}
+                                            </button>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
                             {/* Action Buttons */}
                             <div className="flex gap-4">
@@ -276,7 +275,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                                 </button>
                                 <button
                                     onClick={() => {
-                                        if (!selectedSize) {
+                                        if (product.sizes && product.sizes.length > 0 && !selectedSize) {
                                             alert('Please select a size');
                                             return;
                                         }
@@ -314,7 +313,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
 
                 {/* Reviews Section */}
                 <div className="mt-20 pt-10 border-t border-[#eaeaec]">
-                    <ProductReviews 
+                    <ProductReviews
                         productId={product.id}
                         productRating={product.rating}
                         totalRatings={product.reviews_count}
