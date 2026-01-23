@@ -26,6 +26,15 @@ export default function CheckoutPage() {
     const [orderId, setOrderId] = useState('');
     const [bankDetails, setBankDetails] = useState<BankDetails>(DEFAULT_BANK_DETAILS);
 
+    // New state for payment features
+    const [timeLeft, setTimeLeft] = useState(20 * 60); // 20 minutes
+    const [isTimerExpired, setIsTimerExpired] = useState(false);
+    const [transactionId, setTransactionId] = useState('');
+    const [screenshot, setScreenshot] = useState<File | null>(null);
+    const [screenshotPreview, setScreenshotPreview] = useState<string>('');
+    const [screenshotUrl, setScreenshotUrl] = useState(''); // To store uploaded URL
+    const [isUploading, setIsUploading] = useState(false);
+
     const fetchBankDetails = async () => {
         try {
             const res = await fetch('/api/settings');
@@ -43,6 +52,63 @@ export default function CheckoutPage() {
         }
         fetchBankDetails();
     }, []);
+
+    // Timer Logic
+    useEffect(() => {
+        if (currentStep === 'payment-confirm' && !isTimerExpired) {
+            const timer = setInterval(() => {
+                setTimeLeft((prev) => {
+                    if (prev <= 1) {
+                        clearInterval(timer);
+                        setIsTimerExpired(true);
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+            return () => clearInterval(timer);
+        }
+    }, [currentStep, isTimerExpired]);
+
+    const formatTime = (seconds: number) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    const handleResetTimer = () => {
+        setTimeLeft(20 * 60);
+        setIsTimerExpired(false);
+    };
+
+    const handleScreenshotChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setScreenshot(file);
+            setScreenshotPreview(URL.createObjectURL(file));
+
+            // Upload immediately
+            setIsUploading(true);
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const res = await fetch('/api/upload/image', {
+                    method: 'POST',
+                    body: formData,
+                });
+                const data = await res.json();
+                if (data.url) {
+                    setScreenshotUrl(data.url);
+                }
+            } catch (error) {
+                console.error('Upload failed:', error);
+                alert('Failed to upload screenshot. Please try again.');
+            } finally {
+                setIsUploading(false);
+            }
+        }
+    };
 
     const subtotal = bagItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
     const deliveryFee = subtotal >= 799 ? 0 : 79;
@@ -83,8 +149,10 @@ export default function CheckoutPage() {
             })),
             total_amount: total,
             status: 'pending',
-            payment_method: paymentMethod,
+            payment_method: paymentMethod as 'upi' | 'bank_transfer' | 'cod',
             payment_status: paymentStatus,
+            transaction_id: transactionId,
+            screenshot_url: screenshotUrl,
             dispute_reason: paymentStatus === 'disputed' ? disputeReason : undefined,
             created_at: new Date().toISOString(),
         };
@@ -99,7 +167,7 @@ export default function CheckoutPage() {
             if (!res.ok) throw new Error('Failed to place order');
 
             const savedOrder = await res.json();
-            
+
             // Clear bag
             localStorage.setItem('mynt_bag', '[]');
             setBagItems([]);
@@ -179,21 +247,21 @@ export default function CheckoutPage() {
 
             <main className="container py-8">
                 {/* Progress Indicator */}
-                <div className="max-w-4xl mx-auto mb-8">
+                <div className="max-w-4xl mx-auto mb-8 px-4">
                     <div className="flex items-center justify-between">
                         <div className={`flex items-center ${currentStep === 'details' ? 'text-pink-600' : 'text-slate-400'}`}>
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep === 'details' ? 'bg-pink-600 text-white' : 'bg-slate-200'}`}>1</div>
-                            <span className="ml-2 text-sm font-medium">Details</span>
+                            <span className={`ml-2 text-sm font-medium ${currentStep === 'details' ? 'block' : 'hidden md:block'}`}>Details</span>
                         </div>
-                        <div className="flex-1 h-1 mx-4 bg-slate-200"></div>
+                        <div className="flex-1 h-1 mx-2 md:mx-4 bg-slate-200"></div>
                         <div className={`flex items-center ${['payment-method', 'payment-confirm', 'payment-status'].includes(currentStep) ? 'text-pink-600' : 'text-slate-400'}`}>
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center ${['payment-method', 'payment-confirm', 'payment-status'].includes(currentStep) ? 'bg-pink-600 text-white' : 'bg-slate-200'}`}>2</div>
-                            <span className="ml-2 text-sm font-medium">Payment</span>
+                            <span className={`ml-2 text-sm font-medium ${['payment-method', 'payment-confirm', 'payment-status'].includes(currentStep) ? 'block' : 'hidden md:block'}`}>Payment</span>
                         </div>
-                        <div className="flex-1 h-1 mx-4 bg-slate-200"></div>
+                        <div className="flex-1 h-1 mx-2 md:mx-4 bg-slate-200"></div>
                         <div className={`flex items-center ${currentStep === 'payment-status' ? 'text-pink-600' : 'text-slate-400'}`}>
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep === 'payment-status' ? 'bg-pink-600 text-white' : 'bg-slate-200'}`}>3</div>
-                            <span className="ml-2 text-sm font-medium">Confirm</span>
+                            <span className={`ml-2 text-sm font-medium ${currentStep === 'payment-status' ? 'block' : 'hidden md:block'}`}>Confirm</span>
                         </div>
                     </div>
                 </div>
@@ -312,6 +380,23 @@ export default function CheckoutPage() {
                                             <span className="text-lg font-semibold">🏦 Bank Transfer</span>
                                             <p className="text-sm text-slate-600 ml-6 mt-1">Transfer directly to our bank account</p>
                                         </label>
+                                        <label className={`block p-6 border-2 rounded-xl cursor-not-allowed bg-slate-50 border-slate-200 opacity-60`}>
+                                            <div className="flex items-start">
+                                                <input
+                                                    type="radio"
+                                                    name="payment-method"
+                                                    value="cod"
+                                                    disabled
+                                                    className="mr-3 mt-1"
+                                                />
+                                                <div>
+                                                    <span className="text-lg font-semibold text-slate-500">💵 Cash on Delivery</span>
+                                                    <p className="text-sm text-red-500 mt-1">
+                                                        Cash on Delivery is currently not available.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </label>
                                     </div>
 
                                     <div className="flex gap-4 mt-6">
@@ -328,88 +413,156 @@ export default function CheckoutPage() {
                             {/* Step 3: Payment Confirmation */}
                             {currentStep === 'payment-confirm' && (
                                 <>
-                                    <h2 className="text-xl font-bold text-[var(--text-primary)] mb-6">
-                                        {paymentMethod === 'upi' ? 'UPI Payment Details' : 'Bank Transfer Details'}
-                                    </h2>
+                                    <div className="flex justify-between items-center mb-6">
+                                        <h2 className="text-xl font-bold text-[var(--text-primary)]">
+                                            {paymentMethod === 'upi' ? 'UPI Payment Details' : 'Bank Transfer Details'}
+                                        </h2>
+                                        <div className={`px-4 py-2 rounded-full font-mono font-bold ${isTimerExpired ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}`}>
+                                            ⏱️ {formatTime(timeLeft)}
+                                        </div>
+                                    </div>
 
-                                    {paymentMethod === 'upi' ? (
-                                        <div className="space-y-6">
-                                            {bankDetails.upi_qr_code_url ? (
-                                                <div className="flex flex-col items-center">
-                                                    <p className="text-sm text-slate-600 mb-4">Scan the QR code below to pay</p>
-                                                    <div className="w-64 h-64 border-2 border-slate-200 rounded-xl overflow-hidden bg-white p-4 relative">
-                                                        <Image
-                                                            src={bankDetails.upi_qr_code_url}
-                                                            alt="UPI QR Code"
-                                                            fill
-                                                            className="object-contain"
-                                                        />
+                                    {isTimerExpired ? (
+                                        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center mb-6">
+                                            <h3 className="text-lg font-medium text-red-800 mb-2">Payment Time Expired</h3>
+                                            <p className="text-red-600 mb-4">Please refresh the timer to continue with payment.</p>
+                                            <button
+                                                onClick={handleResetTimer}
+                                                className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                                            >
+                                                Refresh Timer
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            {paymentMethod === 'upi' ? (
+                                                <div className="space-y-6">
+                                                    {bankDetails.upi_qr_code_url ? (
+                                                        <div className="flex flex-col items-center">
+                                                            <p className="text-sm text-slate-600 mb-4">Scan the QR code below to pay</p>
+                                                            <div className="w-64 h-64 border-2 border-slate-200 rounded-xl overflow-hidden bg-white p-4 relative">
+                                                                <Image
+                                                                    src={bankDetails.upi_qr_code_url}
+                                                                    alt="UPI QR Code"
+                                                                    fill
+                                                                    className="object-contain"
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-center">
+                                                            <p className="text-amber-800">QR Code not available. Please use UPI ID below.</p>
+                                                        </div>
+                                                    )}
+
+                                                    <div className="bg-slate-50 rounded-lg p-4">
+                                                        <p className="text-sm text-slate-600 mb-2">Or pay using UPI ID:</p>
+                                                        <div className="flex items-center justify-between bg-white border border-slate-200 rounded-lg p-3">
+                                                            <span className="font-bold text-lg text-pink-600">{bankDetails.upi_id}</span>
+                                                            <button
+                                                                onClick={() => navigator.clipboard.writeText(bankDetails.upi_id)}
+                                                                className="text-sm text-pink-600 hover:text-pink-700 font-medium"
+                                                            >
+                                                                Copy
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                                        <p className="text-sm text-blue-800">
+                                                            <strong>Amount to pay:</strong> ₹{total.toLocaleString()}
+                                                        </p>
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-center">
-                                                    <p className="text-amber-800">QR Code not available. Please use UPI ID below.</p>
+                                                <div className="space-y-4">
+                                                    <p className="text-sm text-slate-600 mb-4">Transfer the amount to the following bank account:</p>
+
+                                                    <div className="bg-slate-50 rounded-lg p-4 space-y-3">
+                                                        <div className="flex justify-between py-2 border-b border-slate-200">
+                                                            <span className="text-slate-600">Bank Name</span>
+                                                            <span className="font-semibold">{bankDetails.bank_name}</span>
+                                                        </div>
+                                                        <div className="flex justify-between py-2 border-b border-slate-200">
+                                                            <span className="text-slate-600">Account Holder</span>
+                                                            <span className="font-semibold">{bankDetails.account_holder}</span>
+                                                        </div>
+                                                        <div className="flex justify-between py-2 border-b border-slate-200">
+                                                            <span className="text-slate-600">Account Number</span>
+                                                            <span className="font-semibold">{bankDetails.account_number}</span>
+                                                        </div>
+                                                        <div className="flex justify-between py-2">
+                                                            <span className="text-slate-600">IFSC Code</span>
+                                                            <span className="font-semibold">{bankDetails.ifsc_code}</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                                        <p className="text-sm text-blue-800">
+                                                            <strong>Amount to transfer:</strong> ₹{total.toLocaleString()}
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             )}
 
-                                            <div className="bg-slate-50 rounded-lg p-4">
-                                                <p className="text-sm text-slate-600 mb-2">Or pay using UPI ID:</p>
-                                                <div className="flex items-center justify-between bg-white border border-slate-200 rounded-lg p-3">
-                                                    <span className="font-bold text-lg text-pink-600">{bankDetails.upi_id}</span>
-                                                    <button
-                                                        onClick={() => navigator.clipboard.writeText(bankDetails.upi_id)}
-                                                        className="text-sm text-pink-600 hover:text-pink-700 font-medium"
-                                                    >
-                                                        Copy
-                                                    </button>
+                                            {/* Transaction ID & Screenshot Upload */}
+                                            <div className="mt-8 pt-6 border-t border-slate-200 space-y-6">
+                                                <div>
+                                                    <label className="block text-sm font-semibold text-[var(--text-primary)] mb-2">Transaction ID *</label>
+                                                    <input
+                                                        type="text"
+                                                        value={transactionId}
+                                                        onChange={(e) => setTransactionId(e.target.value)}
+                                                        className="w-full px-4 py-3 border border-[var(--border-light)] rounded-lg focus:outline-none focus:border-[var(--primary)]"
+                                                        placeholder="Enter UPI / Bank Transaction ID"
+                                                    />
+                                                </div>
+
+                                                <div>
+                                                    <label className="block text-sm font-semibold text-[var(--text-primary)] mb-2">Payment Screenshot *</label>
+                                                    <div className="flex items-center gap-4">
+                                                        <label className="flex-1 cursor-pointer group">
+                                                            <div className="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center hover:bg-slate-50 hover:border-pink-300 transition-all">
+                                                                <span className="text-slate-600 group-hover:text-pink-600">
+                                                                    {screenshot ? screenshot.name : 'Click to upload screenshot'}
+                                                                </span>
+                                                                <input
+                                                                    type="file"
+                                                                    accept="image/*"
+                                                                    onChange={handleScreenshotChange}
+                                                                    className="hidden"
+                                                                />
+                                                            </div>
+                                                        </label>
+                                                        {screenshotPreview && (
+                                                            <div className="w-20 h-20 border border-slate-200 rounded-lg overflow-hidden relative">
+                                                                <Image
+                                                                    src={screenshotPreview}
+                                                                    alt="Preview"
+                                                                    fill
+                                                                    className="object-cover"
+                                                                />
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    {isUploading && <p className="text-sm text-blue-600 mt-2">Uploading...</p>}
                                                 </div>
                                             </div>
 
-                                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                                                <p className="text-sm text-blue-800">
-                                                    <strong>Amount to pay:</strong> ₹{total.toLocaleString()}
-                                                </p>
+                                            <div className="flex gap-4 mt-6">
+                                                <button onClick={() => setCurrentStep('payment-method')} className="flex-1 px-6 py-4 border-2 border-slate-300 text-slate-700 font-semibold rounded-lg hover:bg-slate-50">
+                                                    BACK
+                                                </button>
+                                                <button
+                                                    onClick={handlePaymentConfirm}
+                                                    disabled={isTimerExpired || !transactionId || !screenshotUrl || isUploading}
+                                                    className="flex-1 btn-primary py-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                >
+                                                    I HAVE PAID
+                                                </button>
                                             </div>
-                                        </div>
-                                    ) : (
-                                        <div className="space-y-4">
-                                            <p className="text-sm text-slate-600 mb-4">Transfer the amount to the following bank account:</p>
-
-                                            <div className="bg-slate-50 rounded-lg p-4 space-y-3">
-                                                <div className="flex justify-between py-2 border-b border-slate-200">
-                                                    <span className="text-slate-600">Bank Name</span>
-                                                    <span className="font-semibold">{bankDetails.bank_name}</span>
-                                                </div>
-                                                <div className="flex justify-between py-2 border-b border-slate-200">
-                                                    <span className="text-slate-600">Account Holder</span>
-                                                    <span className="font-semibold">{bankDetails.account_holder}</span>
-                                                </div>
-                                                <div className="flex justify-between py-2 border-b border-slate-200">
-                                                    <span className="text-slate-600">Account Number</span>
-                                                    <span className="font-semibold">{bankDetails.account_number}</span>
-                                                </div>
-                                                <div className="flex justify-between py-2">
-                                                    <span className="text-slate-600">IFSC Code</span>
-                                                    <span className="font-semibold">{bankDetails.ifsc_code}</span>
-                                                </div>
-                                            </div>
-
-                                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                                                <p className="text-sm text-blue-800">
-                                                    <strong>Amount to transfer:</strong> ₹{total.toLocaleString()}
-                                                </p>
-                                            </div>
-                                        </div>
+                                        </>
                                     )}
-
-                                    <div className="flex gap-4 mt-6">
-                                        <button onClick={() => setCurrentStep('payment-method')} className="flex-1 px-6 py-4 border-2 border-slate-300 text-slate-700 font-semibold rounded-lg hover:bg-slate-50">
-                                            BACK
-                                        </button>
-                                        <button onClick={handlePaymentConfirm} className="flex-1 btn-primary py-4">
-                                            I HAVE PAID
-                                        </button>
-                                    </div>
                                 </>
                             )}
 

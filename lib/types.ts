@@ -44,8 +44,10 @@ export interface Order {
     items: CartItem[];
     total_amount: number;
     status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
-    payment_method: 'upi' | 'bank_transfer';
+    payment_method: 'upi' | 'bank_transfer' | 'cod';
     payment_status: 'pending' | 'completed' | 'disputed';
+    transaction_id?: string;
+    screenshot_url?: string;
     created_at: string;
 }
 
@@ -57,9 +59,6 @@ export interface BankDetails {
     upi_id: string;
     upi_qr_code_url: string;
 }
-
-// Demo fashion products
-
 
 export const DEFAULT_BANK_DETAILS: BankDetails = {
     bank_name: 'HDFC Bank',

@@ -92,7 +92,7 @@ const OrderSchema = new Schema<Order>({
     },
     payment_method: {
         type: String,
-        enum: ['upi', 'bank_transfer'],
+        enum: ['upi', 'bank_transfer', 'cod'],
         default: 'upi'
     },
     payment_status: {
@@ -100,6 +100,8 @@ const OrderSchema = new Schema<Order>({
         enum: ['pending', 'completed', 'disputed'],
         default: 'pending'
     },
+    transaction_id: { type: String },
+    screenshot_url: { type: String },
 }, {
     timestamps: { createdAt: 'created_at', updatedAt: false },
 });
